@@ -1,231 +1,296 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wordle Game</title>
-  <style>
-    /* Основные стили */
-    body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      background-color: #123123;
-      color: white;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .container {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 20px;
-      border: 2px solid #3a3a3c;
-      border-radius: 10px;
-      background-color: #1e1e1f;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-    /* Игровое поле */
-    #board {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .row {
-      display: flex;
-      gap: 5px;
-    }
-    .cell {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: bold;
-      border: 1px solid #3a3a3c;
-      border-radius: 4px;
-      background-color: #1e1e1a;
-      color: white;
-      transition: background-color 0.3s;
-    }
-    /* Сообщения */
-    #message {
-      margin-bottom: 10px;
-      font-size: 24px;
-      color: #6aaa64;
-      min-height: 32px;
-    }
-    .win-message {
-      color: #ffd700;
-    }
-    /* Форма ввода */
-    #guess-input {
-      width: 200px;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 10px;
-      border: 1px solid #3a3a3c;
-      border-radius: 4px;
-      text-transform: uppercase;
-      text-align: center;
-      transition: transform 0.2s;
-    }
-    #guess-input:focus {
-      outline: none;
-      border-color: #6aaa64;
-      box-shadow: 0 0 8px #6aaa64;
-    }
-    /* Кнопки */
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      background-color: #6aaa64;
-      color: white;
-      transition: background-color 0.3s, transform 0.2s;
-      margin: 5px;
-    }
-    button:hover {
-      background-color: #538d4e;
-      transform: scale(1.05);
-    }
-    button:active {
-      transform: scale(0.95);
-    }
-    button:disabled {
-      background-color: #787c7e;
-      cursor: not-allowed;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wordle Game</title>
+<style>
+/* Основные стили */
+body {
+font-family: 'Arial', sans-serif;
+text-align: center;
+background-color: #123123;
+color: white;
+margin: 0;
+padding: 0;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+.container {
+max-width: 400px;
+margin: 20px auto;
+padding: 20px;
+border: 2px solid #3a3a3c;
+border-radius: 10px;
+background-color: #1e1e1f;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+/* Анимации */
+@keyframes bounce {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-10px); }
+}
+@keyframes celebrate {
+0% { transform: scale(1); }
+50% { transform: scale(1.2); }
+100% { transform: scale(1); }
+}
+@keyframes confetti {
+0% { transform: translateY(-100vh) rotate(0deg); }
+100% { transform: translateY(100vh) rotate(360deg); }
+}
+.celebrate {
+animation: celebrate 0.5s ease-in-out;
+}
+.confetti {
+position: fixed;
+width: 10px;
+height: 10px;
+background-color: #ffd700;
+animation: confetti 2s linear forwards;
+}
+/* Игровое поле */
+#board {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 10px;
+margin-bottom: 20px;
+}
+.row {
+display: flex;
+gap: 5px;
+}
+.cell {
+width: 40px;
+height: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 18px;
+font-weight: bold;
+border: 1px solid #3a3a3c;
+border-radius: 4px;
+background-color: #1e1e1a;
+color: white;
+transition:
+background-color 0.3s,
+transform 0.2s,
+opacity 0.3s;
+}
+.cell.bounce {
+animation: bounce 0.5s ease;
+}
+/* Сообщения */
+#message {
+margin-bottom: 10px;
+font-size: 24px;
+color: #6aaa64;
+min-height: 32px;
+}
+.win-message {
+color: #ffd700;
+text-shadow: 0 0 8px #ffd700;
+}
+/* Форма ввода */
+#guess-input {
+width: 200px;
+padding: 10px;
+font-size: 16px;
+margin-bottom: 10px;
+border: 1px solid #3a3a3c;
+border-radius: 4px;
+text-transform: uppercase;
+text-align: center;
+transition: transform 0.2s;
+}
+#guess-input:focus {
+outline: none;
+border-color: #6aaa64;
+box-shadow: 0 0 8px #6aaa64;
+}
+/* Кнопки */
+button {
+padding: 10px 20px;
+font-size: 16px;
+cursor: pointer;
+border: none;
+border-radius: 4px;
+background-color: #6aaa64;
+color: white;
+transition:
+background-color 0.3s,
+transform 0.2s;
+margin: 5px;
+}
+button:hover {
+background-color: #538d4e;
+transform: scale(1.05);
+}
+button:active {
+transform: scale(0.95);
+}
+button:disabled {
+background-color: #787c7e;
+cursor: not-allowed;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div id="message">WORDLE</div>
-    <div id="board"></div>
-    <input type="text" id="guess-input" placeholder="Введите слово" maxlength="5">
-    <button id="submit-button">Отправить</button>
-    <button id="restart-button">Новая игра</button>
-  </div>
-  <script>
-    // Расширенный словарь слов (все слова из 5 букв)
-    const words = [
-      "APPLE", "BEACH", "CHAIR", "DREAM", "EAGLE", 
+<div class="container">
+<div id="message">WORDLE</div>
+<div id="board"></div>
+<input type="text" id="guess-input" placeholder="Введите слово" maxlength="5">
+<button id="submit-button">Отправить</button>
+<button id="restart-button">Новая игра</button>
+</div>
+<script>
+// Расширенный словарь слов (все слова из 5 букв)
+const words = [
+"APPLE", "BEACH", "CHAIR", "DREAM", "EAGLE", 
       "FLAME", "GHOST", "HONEY", "IGLOO", "JELLY",
-      
-    ];
-    // Игровые переменные
-    let secretWord = words[Math.floor(Math.random() * words.length)];
-    let attempts = 6;
-    let currentAttempt = 0;
-    // Элементы DOM
-    const board = document.getElementById("board");
-    const message = document.getElementById("message");
-    const guessInput = document.getElementById("guess-input");
-    const submitButton = document.getElementById("submit-button");
-    const restartButton = document.getElementById("restart-button");
-    // Создание игрового поля
-    function createBoard() {
-      board.innerHTML = '';
-      for (let i = 0; i < attempts; i++) {
-        const row = document.createElement("div");
-        row.className = "row";
-        for (let j = 0; j < 5; j++) {
-          const cell = document.createElement("div");
-          cell.className = "cell";
-          row.appendChild(cell);
-        }
-        board.appendChild(row);
-      }
-    }
-    // Обновление игрового поля
-    function updateBoard(guess) {
-      const row = board.children[currentAttempt];
-      let allCorrect = true;
-      for (let i = 0; i < 5; i++) {
-        const cell = row.children[i];
-        cell.textContent = guess[i];
-        if (guess[i] === secretWord[i]) {
-          cell.style.backgroundColor = "#6aaa64";
-        } else if (secretWord.includes(guess[i])) {
-          cell.style.backgroundColor = "#c9b458";
-          allCorrect = false;
-        } else {
-          cell.style.backgroundColor = "#787c7e";
-          allCorrect = false;
-        }
-      }
-      return allCorrect;
-    }
-    // Проверка слова
-    function checkGuess(guess) {
-      if (guess.length !== 5) {
-        showMessage("Слово должно быть из 5 букв!", '#ff4444');
-        return;
-      }
-      if (!words.includes(guess)) {
-        showMessage("Такого слова нет в списке!", '#ff4444');
-        return;
-      }
-      const isWin = updateBoard(guess);
-      currentAttempt++;
-      guessInput.value = '';
-      if (isWin) {
-        showMessage("ПОБЕДА! 🎉", '#ffd700', true);
-        endGame();
-      } else if (currentAttempt === attempts) {
-        showMessage(`Игра окончена! Слово: ${secretWord}`, '#ff4444');
-        endGame();
-      } else {
-        showMessage("Продолжайте угадывать!", '#6aaa64');
-      }
-    }
-    // Показ сообщений
-    function showMessage(text, color = '#6aaa64', isWin = false) {
-      message.textContent = text;
-      message.style.color = color;
-      if (isWin) message.classList.add('win-message');
-      else message.classList.remove('win-message');
-    }
-    // Завершение игры
-    function endGame() {
-      guessInput.disabled = true;
-      submitButton.disabled = true;
-    }
-    // Новая игра
-    function restartGame() {
-      secretWord = words[Math.floor(Math.random() * words.length)];
-      currentAttempt = 0;
-      createBoard();
-      showMessage("WORDLE");
-      guessInput.disabled = false;
-      submitButton.disabled = false;
-      guessInput.value = "";
-    }
-    // Обработчики событий
-    submitButton.addEventListener("click", () => {
-      const guess = guessInput.value.toUpperCase();
-      checkGuess(guess);
-    });
-    restartButton.addEventListener("click", restartGame);
-    guessInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        const guess = guessInput.value.toUpperCase();
-        checkGuess(guess);
-      }
-    });
-    // Запрет ввода символов, кроме букв
-    guessInput.addEventListener("input", (e) => {
-      e.target.value = e.target.value.replace(/[^A-Za-z]/gi, '').toUpperCase();
-    });
-    // Инициализация игры
-    createBoard();
-  </script>
+      "KINGS", "LEMON", "MAGIC", "NINJA", "OCEAN",
+      "PIANO", "QUEEN", "RIVER", "SNAKE", "TIGER"
+
+];
+// Игровые переменные
+let secretWord = words[Math.floor(Math.random() * words.length)];
+let attempts = 6;
+let currentAttempt = 0;
+// Элементы DOM
+const board = document.getElementById("board");
+const message = document.getElementById("message");
+const guessInput = document.getElementById("guess-input");
+const submitButton = document.getElementById("submit-button");
+const restartButton = document.getElementById("restart-button");
+// Создание игрового поля
+function createBoard() {
+board.innerHTML = '';
+for (let i = 0; i < attempts; i++) {
+const row = document.createElement("div");
+row.className = "row";
+for (let j = 0; j < 5; j++) {
+const cell = document.createElement("div");
+cell.className = "cell";
+row.appendChild(cell);
+}
+board.appendChild(row);
+}
+}
+// Анимация победы
+function celebrateWin() {
+// Анимация сообщения
+message.classList.add('celebrate');
+
+// Создание конфетти
+for (let i = 0; i < 50; i++) {
+const confetti = document.createElement('div');
+confetti.className = 'confetti';
+confetti.style.left = Math.random() * 100 + 'vw';
+confetti.style.animationDelay = Math.random() * 2 + 's';
+confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+document.body.appendChild(confetti);
+}
+// Удаление конфетти через 3 секунды
+setTimeout(() => {
+document.querySelectorAll('.confetti').forEach(c => c.remove());
+}, 3000);
+}
+// Обновление игрового поля
+function updateBoard(guess) {
+const row = board.children[currentAttempt];
+let allCorrect = true;
+for (let i = 0; i < 5; i++) {
+const cell = row.children[i];
+cell.textContent = guess[i];
+
+// Анимация появления буквы
+setTimeout(() => {
+cell.style.opacity = '1';
+}, i * 100);
+if (guess[i] === secretWord[i]) {
+cell.style.backgroundColor = "#6aaa64";
+cell.classList.add('bounce');
+} else if (secretWord.includes(guess[i])) {
+cell.style.backgroundColor = "#c9b458";
+allCorrect = false;
+cell.classList.add('bounce');
+} else {
+cell.style.backgroundColor = "#787c7e";
+allCorrect = false;
+cell.classList.add('bounce');
+}
+}
+return allCorrect;
+}
+// Проверка слова
+function checkGuess(guess) {
+if (guess.length !== 5) {
+showMessage("Слово должно быть из 5 букв!", '#ff4444');
+return;
+}
+if (!words.includes(guess)) {
+showMessage("Такого слова нет в списке!", '#ff4444');
+return;
+}
+const isWin = updateBoard(guess);
+currentAttempt++;
+guessInput.value = '';
+if (isWin) {
+showMessage("ПОБЕДА! 🎉", '#ffd700', true);
+celebrateWin();
+endGame();
+} else if (currentAttempt === attempts) {
+showMessage(`Игра окончена! Слово: ${secretWord}`, '#ff4444');
+endGame();
+} else {
+showMessage("Продолжайте угадывать!", '#6aaa64');
+}
+}
+// Показ сообщений
+function showMessage(text, color = '#6aaa64', isWin = false) {
+message.textContent = text;
+message.style.color = color;
+if (isWin) message.classList.add('win-message');
+else message.classList.remove('win-message');
+}
+// Завершение игры
+function endGame() {
+guessInput.disabled = true;
+submitButton.disabled = true;
+}
+// Новая игра
+function restartGame() {
+secretWord = words[Math.floor(Math.random() * words.length)];
+currentAttempt = 0;
+createBoard();
+showMessage("WORDLE");
+guessInput.disabled = false;
+submitButton.disabled = false;
+guessInput.value = "";
+document.querySelectorAll('.confetti').forEach(c => c.remove());
+}
+// Обработчики событий
+submitButton.addEventListener("click", () => {
+const guess = guessInput.value.toUpperCase();
+checkGuess(guess);
+});
+restartButton.addEventListener("click", restartGame);
+guessInput.addEventListener("keypress", (e) => {
+if (e.key === "Enter") {
+const guess = guessInput.value.toUpperCase();
+checkGuess(guess);
+}
+});
+// Запрет ввода символов, кроме букв
+guessInput.addEventListener("input", (e) => {
+e.target.value = e.target.value.replace(/[^A-Za-z]/gi, '').toUpperCase();
+});
+// Инициализация игры
+createBoard();
+</script>
+
 </body>
 </html>
