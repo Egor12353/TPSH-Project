@@ -8,8 +8,8 @@
     body {
       font-family: 'Arial', sans-serif;
       text-align: center;
-      background-color: #123123;
-      color: white;
+      background-color: #b19cd9;
+      color: #FFD700;
       margin: 0;
       padding: 0;
       min-height: 100vh;
@@ -24,7 +24,7 @@
       padding: 20px;
       border: 2px solid #3a3a3c;
       border-radius: 10px;
-      background-color: #1e1e1f;
+      background-color: #ffe6f2;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
@@ -79,28 +79,32 @@
       font-weight: bold;
       border: 1px solid #3a3a3c;
       border-radius: 4px;
-      background-color: #1e1e1a;
-      color: white;
+      background-color: white;
+      color: #3a3a3c;
       transition: 
-        background-color 0.3s, 
+        background-color 0.3s ease, 
         transform 0.2s,
-        opacity 0.3s;
+        opacity 0.3s,
+        border-color 0.3s;
     }
 
     .cell.bounce {
       animation: bounce 0.5s ease;
     }
 
+    .row.active .cell {
+      border-color: #565758;
+    }
+
     #message {
       margin-bottom: 10px;
       font-size: 24px;
-      color: #6aaa64;
       min-height: 32px;
+      color: white;
     }
 
     .win-message {
-      color: #ffd700;
-      text-shadow: 0 0 8px #ffd700;
+      text-shadow: 0 0 8px white;
     }
 
     #guess-input {
@@ -175,12 +179,11 @@
     ];
 
     const wordsRU = [
-      "АКЦИЯ", "БУКВА", "ВЕТЕР", "ГРУША", "ДОЖДЬ",
-      "ЖИЗНЬ", "ЗВУК", "КНИГА", "ЛОДКА", "МЫШЬ",
-      "НОСОК", "ОКНО", "ПИЦЦА", "РОЗА", "СОКОЛ",
-      "ТУЧА", "УТКА", "ФОНТАН", "ХЛЕБ", "ЦВЕТ",
-      "ЧАЙКА", "ШАПКА", "ЩУКА", "ЭХО", "ЮЛА",
-      "ЯБЛОКО", "ЯЩЕР", "ЯРКО"
+     "АКЦИЯ", "БУКВА", "ВЕТЕР", "ГРУША", "ДОЖДЬ",
+      "ЖИЗНЬ", "ЗВУКИ", "КНИГА", "ЛОДКА",
+      "НОСОК", "ОГОНЬ", "ПИЦЦА", "РЫБКА", "СОКОЛ",
+      "ТУМАН", "УТЁСЫ", "ФАНТА", "ЦВЕТЫ",
+      "ЧАЙКА", "ШАПКА", "БОМБА", "ВОДКА", "ШКОЛА"
     ].map(word => word.toUpperCase());
 
     let currentLanguage = 'RU';
@@ -232,32 +235,48 @@
     function updateBoard(guess) {
       const row = board.children[currentAttempt];
       let allCorrect = true;
+      
+      row.classList.add('active');
 
       for (let i = 0; i < 5; i++) {
         const cell = row.children[i];
-        cell.textContent = guess[i];
-        
-        setTimeout(() => {
-          cell.style.opacity = '1';
-        }, i * 100);
-
-        if (guess[i] === secretWord[i]) {
-          cell.style.backgroundColor = "#6aaa64";
-          cell.classList.add('bounce');
-        } else if (secretWord.includes(guess[i])) {
-          cell.style.backgroundColor = "#c9b458";
-          allCorrect = false;
-          cell.classList.add('bounce');
-        } else {
-          cell.style.backgroundColor = "#787c7e";
-          allCorrect = false;
-          cell.classList.add('bounce');
-        }
+        cell.textContent = guess[i] || '';
       }
-      return allCorrect;
+
+      guessInput.disabled = true;
+      submitButton.disabled = true;
+
+      return new Promise(resolve => {
+        let correctCount = 0;
+        
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            const cell = row.children[i];
+            cell.classList.add('bounce');
+            
+            if (guess[i] === secretWord[i]) {
+              cell.style.backgroundColor = "#6aaa64";
+              correctCount++;
+            } else if (secretWord.includes(guess[i])) {
+              cell.style.backgroundColor = "#c9b458";
+            } else {
+              cell.style.backgroundColor = "#787c7e";
+            }
+
+            if (i === 4) {
+              setTimeout(() => {
+                row.classList.remove('active');
+                guessInput.disabled = false;
+                submitButton.disabled = false;
+                resolve(correctCount === 5);
+              }, 300);
+            }
+          }, i * 200);
+        }
+      });
     }
 
-    function checkGuess(guess) {
+    async function checkGuess(guess) {
       const words = currentLanguage === 'EN' ? wordsEN : wordsRU;
       
       if (guess.length !== 5) {
@@ -274,13 +293,14 @@
         return;
       }
 
-      const isWin = updateBoard(guess);
+      const isWin = await updateBoard(guess);
       currentAttempt++;
       guessInput.value = '';
+      guessInput.focus();
 
       if (isWin) {
         const winMsg = currentLanguage === 'EN' ? "VICTORY! 🎉" : "ПОБЕДА! 🎉";
-        showMessage(winMsg, '#ffd700', true);
+        showMessage(winMsg, 'white', true);
         celebrateWin();
         endGame();
       } else if (currentAttempt === attempts) {
@@ -344,10 +364,15 @@
     });
 
     guessInput.addEventListener("input", (e) => {
-      const regex = currentLanguage === 'EN' 
-        ? /[^A-Za-z]/gi 
-        : /[^А-ЯЁа-яё]/gi;
-      e.target.value = e.target.value.replace(regex, '').toUpperCase();
+      const guess = e.target.value.toUpperCase().slice(0, 5);
+      const row = board.children[currentAttempt];
+      
+      for (let i = 0; i < 5; i++) {
+        const cell = row.children[i];
+        cell.textContent = guess[i] || '';
+      }
+      
+      e.target.value = guess;
     });
 
     createBoard();
