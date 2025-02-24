@@ -1,0 +1,24 @@
+
+      "APPLE", "BEACH", "CHAIR", "DREAM", "EAGLE", "FLAME", "GHOST", "HONEY", 
+      "IGLOO", "JELLY", "KINGS", "LEMON", "MAGIC", "NINJA", "OCEAN", "PIANO", 
+      "QUEEN", "RIVER", "SNAKE", "TIGER", "WATER", "EARTH", "SMART", "GRASS", 
+      "CLOUD", "BRAIN", "MUSIC", "PHONE", "SUGAR", "TRAIN", "SPACE", "FRUIT", 
+      "HUMAN", "LIGHT", "POWER", "STONE", "WHEAT", "GLASS", "CHESS", "MONEY", 
+      "PEARL", "VOICE", "CHALK", "BREAD", "CRANE", "DANCE", "EAGER", "FAITH", 
+      "GIANT", "HASTE", "IVORY", "JOKER", "KNIFE", "LUNAR", "MERRY", "NOBLE", 
+      "OLIVE", "PILOT", "QUILT", "ROBIN", "SALAD", "THORN", "URBAN", "VAPOR", 
+      "WISER", "YACHT", "ZEBRA", "ALBUM", "BISON", "CANDY", "DEBIT", "ENVOY", 
+      "FROST", "GRASP", "HORSE", "INLET", "JUMBO", "KOALA", "LATCH", "MAGMA", 
+      "NUDGE", "OPERA", "PRAWN", "QUART", "RUSTY", "SCARF", "TREND", "USHER"
+
+    
+      "АКЦИЯ", "БУКВА", "ВЕТЕР", "ГРУША", "ДОЖДЬ", "ЖИЗНЬ", "ЗВУКИ", "КНИГА", 
+      "ЛОДКА", "МЕДИК", "НОСОК", "ОГОНЬ", "ПИЦЦА", "РЫБКА", "СОКОЛ", "ТУМАН", 
+      "ФАНТА", "ЦВЕТЫ", "ЧАЙКА", "ШАПКА", "БОМБА", "ВОДКА", "ШКОЛА", 
+      "ПЕСОК", "ТРАВА", "ОКЕАН", "МЕТРО", "ЗВЕРЬ", "ПТИЦА", "РУЧКА", "БУМАГА", 
+      "СЛОВО", "ЧИСЛО", "ПЕСНЯ", "КРЫША", "СТЕНА", "ПОЛКА", "МАГИЯ", "ПИРАТ", 
+      "ВОЛНА", "ДУБОК", "ЖАРКО", "ЗАБОР", "ИГРОК", "КАМЫШ", "ЛЕСОК", "МОРОЗ", 
+      "ОСИНА", "ТЕАТР", "УЛИЦА", "ВИЛКА", "ПУШКА", "ПЕСКИ", "МИСКА", "ШТОРМ", 
+      "ЭКРАН", "КОТИК", "АЗАРТ", "БАНАН", "ГРОЗА", "ЖИРАФ", "ИКОНА", "КАРТА", 
+      "МАЙКА", "ПАЛКА", "РУБИН", "САЛОН", "ТАНЕЦ", "ФИНИК", "ХОББИ", "ЧЕРВЬ", 
+      "ЩЕНОК", "ЭМАЛЬ", "ЮНОША"
